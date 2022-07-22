@@ -3,27 +3,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const app = express();
+const { Wallet, TopUp } = require('./models');
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-
-// A wallet schema having:
-//  address - address of a wallet.
-//  topUps - top-up indices of a wallet on all supported chains.
-const walletSchema = new Schema({
-    address: { type: String, required: true, unique: true },
-    topUps: [{ type: Schema.Types.ObjectId, ref: 'TopUps' }],
-});
-
-// A top-up schame having:
-//  index - top-up index object which can be queried from the smart contract.
-//  netId - network id of a corresponding top-up index.
-const topUpSchema = new Schema({
-    index: { type: String, required: true },
-    netId: Number
-});
-
-const Wallet = mongoose.model('Wallet', walletSchema);
-const TopUp = mongoose.model('TopUps', topUpSchema);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -148,6 +130,6 @@ app.delete('/api/topup/delete', async(req, res) => {
     return res.send();
 });
 
-app.listen(process.env.PORT || 3000, async () => {
-    console.log(`App listening on port ${process.env.PORT}`);
+app.listen(process.env.FRONT_PORT, async () => {
+    console.log(`App listening on port ${process.env.FRONT_PORT}`);
 });
