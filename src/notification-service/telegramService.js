@@ -1,14 +1,14 @@
 require('dotenv').config();
 const axios = require('axios');
 const express = require('express');
-const router = express.Router();
+const telegramRouter = express.Router();
 const ethers = require('ethers');
-const { Wallet, Watcher, Notifications } = require('../../models');
+const { Wallet, Watcher, Notifications } = require('../models');
 
-const { TELEGRAM_BOT_TOKEN, NOTIFICATIONS_SERVER } = process.env;
+const { TELEGRAM_BOT_TOKEN, SERVER_URL } = process.env;
 const TELEGRAM_BOT_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
 const URI = `/webhook/${TELEGRAM_BOT_TOKEN}`;
-const WEBHOOK_URL = NOTIFICATIONS_SERVER + URI;
+const WEBHOOK_URL = SERVER_URL + URI;
 const SEND_MESSAGE = `${TELEGRAM_BOT_URL}/sendMessage`;
 
 const init = async () => {
@@ -82,7 +82,7 @@ const unwatchWallet = async (watcherId, walletAddress) => {
 //  1. /watch {address} - Watch an address for top-up status.
 //  2. /unwatch {address} - Unwatch an address for top-up status.
 // Is there a better way to handle bot commands and responses?
-router.post(URI, async (req, res) => {
+telegramRouter.post(URI, async (req, res) => {
     if(req.body.message === undefined) return res.send();
 
     const messageText = req.body.message.text;
@@ -173,5 +173,5 @@ router.post(URI, async (req, res) => {
 
 module.exports = {
     init,
-    router
+    telegramRouter
 };
